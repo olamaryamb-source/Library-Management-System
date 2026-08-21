@@ -1,126 +1,70 @@
-library = []
-def menu():
-    print("1. Add book\n2. Borrow book\n3. Return book\n4. View all books\n5. Search for book\n6. Delete a book\n7. Save and exit")
-    userchoice = int(input("Pick an option: "))
+## Displays the menu to provide options for the user
+def LibraryMenu():
+    print("Choose an option (enter a number from 1-7)")
+    print("1. Add book")
+    print("2. Borrow book")
+    print("3. Return book")
+    print("4. View all books")
+    print("5. Search for a book")
+    print("6. Delete book")
+    print("7. Exit")
+    userchoice = int(input(" "))
     return userchoice
-def ADD_BOOK():
-    title = input("What is the title of the book?: ").title()
-    if len(library) > 0:
-        for check in range(len(library)):
-            i0 = library[check][0]
-            if i0 == title:
+
+##Stores the library list in a txt file
+def StoreList():
+    ListUpdate = open("Library.txt", "w")
+    for entry in range(len(Library)):
+        title = Library[entry][0]
+        author = Library[entry][1]
+        status = Library[entry][2]
+        ListUpdate.write("{}, {}, {}\n".format(title, author, status))
+    ListUpdate.close()
+
+""" If the list is empty the checks are bypassed an the author is added to the database.
+If it is not empty, the book is compared to previous entries to prevent duplicate entries """
+def AddBook():
+    query = input("What book would you like to add to the library?: ")
+    found = False
+    if len(Library) > 0:
+        for i in range(len(Library)):
+            book = Library[i][0]
+            if query == book:
                 print("Book is already in the library")
+                found = True
                 break
-            elif i0 != title and check + 1 == len(library):
-                author = input("Who is the author of the book?: ").upper()
-                library.append([title, author, "Available"])
-                library.sort()
-                books = open("Books.txt", "w")
-                for i in range(len(library)):
-                    books.write("{}, {}, {}\n".format(library[i][0], library[i][1], library[i][2]))
-                books.close()
-                break
-    else:
-        author = input("Who is the author of the book?: ").upper()
-        library.append([title, author, "Available"])
-        library.sort()
-        books = open("Books.txt", "w")
-        for i in range(len(library)):
-            books.write("{}, {}, {}\n".format(library[i][0], library[i][1], library[i][2]))
-        books.close()
-def BORROW_BOOK():
-    borrow = input("What book do you want to borrow?: ").title()
-    for index in range(len(library)):
-        i0 = library[index][0]
-        i1 = library[index][1]
-        i2 = library[index][2]
-        if i0 == borrow and i2 == "Available":
-            library[index][2] = "Borrowed"
-            books = open("Books.txt", "w")
-            for i in range(len(library)):
-                books.write("{}, {}, {}\n".format(library[i][0], library[i][1], library[i][2]))
-            books.close()
+            elif found == False and i + 1 == len(Library):
+                author = input("Who is the author of the book?: ")
+                Library.append([query, author, "Available"])
+                StoreList()
+    elif len(Library) == 0:
+        author = input("Who is the author of the book?: ")
+        Library.append([query, author, "Available"])
+        StoreList()
+
+""" Searches through the library list. If book is found and available The user is allowed
+to borrow. Any other condition prevents borrowing"""
+def BorrowBook():
+    query = input("What book do yu want to borrow?: ")
+    found = False
+    for borrow in range(len(Library)):
+        book = Library[borrow][0]
+        status = Library[borrow][2]
+        if book == query and status == "Available":
+            Library[borrow][2] = "Borrowed"
+            found = True
             break
-        elif i0 == borrow and i2 == "Borrowed":
-            print("Book is already borrowed")
-def RETURN_BOOK():
-    returns = input("What book are you returning?: ").title()
-    for index in range(len(library)):
-        i0 = library[index][0]
-        i1 = library[index][1]
-        i2 = library[index][2]
-        if i0 == returns and i2 == "Borrowed":
-            library[index][2] = "Available"
-            books = open("Books.txt", "w")
-            for i in range(len(library)):
-                books.write("{}, {}, {}\n".format(library[i][0], library[i][1], library[i][2]))
-            books.close()
-            break
-        elif i0 == returns and i2 == "Available":
-            print("This book was not borrowed")
-def VIEW_BOOKS():
-    header = "Library list".center(105)
-    print(header)
-    listno = 0
-    for i in range(len(library)):
-        listno += 1
-        i0 = library[i][0]
-        i1 = library[i][1]
-        i2 = library[i][2]
-        print("{}. Title: {}\n   Author: {}\n   Status: {}\n".format(listno, i0, i1, i2))
-def SEARCH_BOOKS():
-    search = input("What book do you want to find?: ").title()
-    for i in range(len(library)):
-        i0 = library[i][0]
-        i1 = library[i][1]
-        i2 = library[i][2]
-        if i0 == search:
-            print("Title: {}\nAuthor: {}\nStatus: {}".format(i0, i1, i2))
-            break
-        elif i0 != search and i == len(library) - 1:
+        elif borrow == len(Library) and found == False:
             print("Book not found")
-def DELETE_BOOK():
-    delete = input("What book do you want to delete?: ").title()
-    for index in range(len(library)):
-        i0 = library[index][0]
-        if delete == i0:
-            library.pop(index)
-            books = open("Books.txt", "w")
-            for i in range(len(library)):
-                books.write("{}, {}, {}\n".format(library[i][0], library[i][1], library[i][2]))
-            books.close()
-            break
-        elif delete != i0 and index == len(library) - 1:
-            print("This book does not exist")
-def COUNT_BOOKS():
-    bookCount = 0
-    Astat = 0
-    Bstat = 0
-    for count in range(len(library)):
-        bookCount += 1
-        i0 = library[count][0]
-        i2 = library[count][2]
-        if i2 == "Available":
-            Astat += 1
-        elif i2 == "Borrowed":
-            Bstat += 1
-    print("\nLibrary Summary\n------------\nTotal books: {}\nAvailable: {}\nBorrowed: {}\n".format(bookCount, Astat, Bstat))
+        elif query == book and status == "Borrowed":
+            print("This book is already borrowed")
+
+Library = []
 userchoice = 0
 while userchoice != 7:
     try:
-        COUNT_BOOKS()
-        userchoice = menu()
+        userchoice = LibraryMenu()
         if userchoice == 1:
-            ADD_BOOK()
-        elif userchoice == 2:
-            BORROW_BOOK()
-        elif userchoice == 3:
-            RETURN_BOOK()
-        elif userchoice == 4:
-            VIEW_BOOKS()
-        elif userchoice == 5:
-            SEARCH_BOOKS()
-        elif userchoice == 6:
-            DELETE_BOOK()
+            AddBook()
     except ValueError:
-        print("Choose a number between 1 and 7")
+        print("Invalid input")
