@@ -9,4 +9,4 @@ If the user enters "2" or "3" the StatusChange function is run. The user then in
 
 If the user enters a a value that isn't a number or a number not in the range of 1-7, it triggers a ValueError; an error message is output and they are asked to choose again.
 
-And finally, if the user enters "7" the program ends
+And finally, if the user enters "7" the program ends.
