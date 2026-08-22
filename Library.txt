@@ -1,2 +1,4 @@
 l, lma, Available
-k, lma, Available
+Little Men, LMA, Available
+Little Women, LMA, Available
+White Chicks, Idk, Available

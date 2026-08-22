@@ -12,14 +12,15 @@ def LibraryMenu():
     return userchoice
 
 ##Stores the library list in a txt file
-def StoreList():
-    ListUpdate = open("Library.txt", "w")
-    for entry in range(len(Library)):
-        title = Library[entry][0]
-        author = Library[entry][1]
-        status = Library[entry][2]
-        ListUpdate.write("{}, {}, {}\n".format(title, author, status))
-    ListUpdate.close()
+def StoreList(book):
+    with open("Library.txt", "a") as file:
+        file.write("{}, {}, {}\n".format(book[0], book[1], book[2])) 
+
+def Borrow_Or_Return():
+    with open("Library.txt", "w") as editentry:
+        for i in range(len(Library)):
+            editentry.write("{}, {}, {}\n".format(Library[i][0], Library[i][1], Library[i][2]))
+
 
 """ If the list is empty the checks are bypassed an the author is added to the database.
 If it is not empty, the book is compared to previous entries to prevent duplicate entries """
@@ -28,43 +29,71 @@ def AddBook():
     found = False
     if len(Library) > 0:
         for i in range(len(Library)):
-            book = Library[i][0]
-            if query == book:
+            title = Library[i][0]
+            if query == title:
                 print("Book is already in the library")
                 found = True
                 break
             elif found == False and i + 1 == len(Library):
                 author = input("Who is the author of the book?: ")
-                Library.append([query, author, "Available"])
-                StoreList()
+                book = [query, author, "Available"]
+                Library.append(book)
+                StoreList(book)
     elif len(Library) == 0:
         author = input("Who is the author of the book?: ")
-        Library.append([query, author, "Available"])
-        StoreList()
+        book = [query, author, "Available"]
+        Library.append(book)
+        StoreList(book)
+
+## Loads previous entries to fill list before the start of the program
+def LoadLibrary():
+    with open("Library.txt", "r") as FileLoad:
+        for line in FileLoad:
+            line = line.strip().split(", ")
+            Library.append(line)
 
 """ Searches through the library list. If book is found and available The user is allowed
 to borrow. Any other condition prevents borrowing"""
-def BorrowBook():
-    query = input("What book do yu want to borrow?: ")
+def StatusChange():
+    if userchoice == 2:
+        query = input("What book do you want to borrow?: ")
+    elif userchoice == 3:
+        query = input("What book do you want to return?: ")
     found = False
     for borrow in range(len(Library)):
-        book = Library[borrow][0]
+        title = Library[borrow][0]
         status = Library[borrow][2]
-        if book == query and status == "Available":
+        if title == query and status == "Available" and Borrow == True:
             Library[borrow][2] = "Borrowed"
+            Borrow_Or_Return()
             found = True
             break
-        elif borrow == len(Library) and found == False:
+        elif title == query and status == "Borrowed" and Return == True:
+            Library[borrow][2] = "Available"
+            Borrow_Or_Return()
+            found = True
+        elif borrow + 1 == len(Library) and found == False:
             print("Book not found")
-        elif query == book and status == "Borrowed":
+        elif query == title and status == "Borrowed" and Borrow == True:
             print("This book is already borrowed")
+        elif query == title and status == "Available" and Return == True:
+            print("This book is already available")
 
 Library = []
+LoadLibrary()
 userchoice = 0
 while userchoice != 7:
     try:
         userchoice = LibraryMenu()
         if userchoice == 1:
             AddBook()
+        elif userchoice == 2:
+            Borrow = True
+            StatusChange()
+            Borrow = False
+        elif userchoice == 3:
+            Return = True
+            StatusChange()
+            Return = False
     except ValueError:
         print("Invalid input")
