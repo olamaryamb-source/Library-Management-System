@@ -21,7 +21,6 @@ def Borrow_Or_Return():
         for i in range(len(Library)):
             editentry.write("{}, {}, {}\n".format(Library[i][0], Library[i][1], Library[i][2]))
 
-
 """ If the list is empty the checks are bypassed an the author is added to the database.
 If it is not empty, the book is compared to previous entries to prevent duplicate entries """
 def AddBook():
@@ -54,7 +53,7 @@ def LoadLibrary():
 
 """ Searches through the library list. If book is found and available The user is allowed
 to borrow. Any other condition prevents borrowing"""
-def StatusChange():
+def StatusChange(BorrowFlag, ReturnFlag):
     if userchoice == 2:
         query = input("What book do you want to borrow?: ")
     elif userchoice == 3:
@@ -63,21 +62,54 @@ def StatusChange():
     for borrow in range(len(Library)):
         title = Library[borrow][0]
         status = Library[borrow][2]
-        if title == query and status == "Available" and Borrow == True:
+        if title == query and status == "Available" and BorrowFlag == True:
             Library[borrow][2] = "Borrowed"
             Borrow_Or_Return()
             found = True
             break
-        elif title == query and status == "Borrowed" and Return == True:
+        elif title == query and status == "Borrowed" and ReturnFlag == True:
             Library[borrow][2] = "Available"
             Borrow_Or_Return()
             found = True
+            break
+        elif query == title and status == "Borrowed" and BorrowFlag == True:
+            print("This book is already borrowed")
+            break
+        elif query == title and status == "Available" and ReturnFlag == True:
+            print("This book is already available")       
+            break
         elif borrow + 1 == len(Library) and found == False:
             print("Book not found")
-        elif query == title and status == "Borrowed" and Borrow == True:
-            print("This book is already borrowed")
-        elif query == title and status == "Available" and Return == True:
-            print("This book is already available")
+            break
+
+def ViewLibrary():
+    ListNo = 0
+    for i in range(len(Library)):
+        ListNo += 1
+        print("{}. {}, {}, {}".format(ListNo, Library[i][0], Library[i][1], Library[i][2]))
+
+def Search_For_Book():
+    found = False
+    query = input("What book are you searching for?: ")
+    for i in range(len(Library)):
+        if query == Library[i][0]:
+            print("{}, {}, {}".format(Library[i][0], Library[i][1], Library[i][2]))
+            found == True
+            break
+        elif i + 1 == len(Library) and found == False:
+            print("Book not found")
+
+def DeleteBook():
+    query = input("What book do you want to delete?: ")
+    found = False
+    for i in range(len(Library)):
+        if query == Library[i][0]:
+            Library.remove(query)
+            found = True
+            StoreList(query)
+            break
+        elif i + 1 == len(Library) and found == False:
+            print("Book not found")
 
 Library = []
 LoadLibrary()
@@ -88,12 +120,14 @@ while userchoice != 7:
         if userchoice == 1:
             AddBook()
         elif userchoice == 2:
-            Borrow = True
-            StatusChange()
-            Borrow = False
+            StatusChange(True, False)
         elif userchoice == 3:
-            Return = True
-            StatusChange()
-            Return = False
+            StatusChange(False, True)
+        elif userchoice == 4:
+            ViewLibrary()
+        elif userchoice == 5:
+            Search_For_Book()
+        elif userchoice == 6:
+            DeleteBook()
     except ValueError:
         print("Invalid input")
