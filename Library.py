@@ -16,6 +16,12 @@ def StoreList(book):
     with open("Library.txt", "a") as file:
         file.write("{}, {}, {}\n".format(book[0], book[1], book[2])) 
 
+def UpdateList():
+    deletedlist = open("Library.txt", "w")
+    for i in range(len(Library)):
+        deletedlist.write("{}, {}, {}\n".format(Library[i][0], Library[i][1], Library[i][2]))
+    deletedlist.close()
+
 def Borrow_Or_Return():
     with open("Library.txt", "w") as editentry:
         for i in range(len(Library)):
@@ -104,9 +110,9 @@ def DeleteBook():
     found = False
     for i in range(len(Library)):
         if query == Library[i][0]:
-            Library.remove(query)
+            Library.pop([i][0])
             found = True
-            StoreList(query)
+            UpdateList()
             break
         elif i + 1 == len(Library) and found == False:
             print("Book not found")
