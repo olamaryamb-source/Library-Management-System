@@ -1,6 +1,3 @@
-Anne of Green Gables, LMM, Available
-Little Women, LMA, Borrowed
-Little Men, LMM, Available
-Twin crowns, catherine doyle, Available
-Pollyanna, Frances, Available
-Black Panther, Stephen Hawks, Available
+ Little Women, lms, Available
+litt, f, Available
+d, e, Available

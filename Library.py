@@ -7,7 +7,8 @@ def LibraryMenu():
     print("4. View all books")
     print("5. Search for a book")
     print("6. Delete book")
-    print("7. Exit")
+    print("7. Clear Library")
+    print("8. Exit")
     userchoice = int(input(" "))
     return userchoice
 
@@ -88,11 +89,14 @@ def StatusChange(BorrowFlag, ReturnFlag):
             print("Book not found")
             break
 
-def ViewLibrary():
-    ListNo = 0
-    for i in range(len(Library)):
-        ListNo += 1
-        print("{}. {}, {}, {}".format(ListNo, Library[i][0], Library[i][1], Library[i][2]))
+def ViewLibrary(cleared):
+    if cleared == False:
+        ListNo = 0
+        for i in range(len(Library)):
+            ListNo += 1
+            print("{}. {}, {}, {}".format(ListNo, Library[i][0], Library[i][1], Library[i][2]))
+    elif cleared == True:
+        print("There are no books in the library")
 
 def Search_For_Book():
     found = False
@@ -100,7 +104,7 @@ def Search_For_Book():
     for i in range(len(Library)):
         if query == Library[i][0]:
             print("{}, {}, {}".format(Library[i][0], Library[i][1], Library[i][2]))
-            found == True
+            found = True
             break
         elif i + 1 == len(Library) and found == False:
             print("Book not found")
@@ -117,23 +121,41 @@ def DeleteBook():
         elif i + 1 == len(Library) and found == False:
             print("Book not found")
 
+def ClearLibrary(cleared):
+    while cleared == False:
+        confirm = input("Do you want to clear the library? (Yes/No): ").upper()
+        if confirm == "YES":
+            clear = open("Library.txt", "w")
+            clear.write(" ")
+            clear.close()
+            Library = []
+            cleared = True
+        elif confirm == "NO":
+            break
+        else:
+            print("Answer with yes or no")
+
 Library = []
 LoadLibrary()
 userchoice = 0
-while userchoice != 7:
+cleared = False
+while userchoice != 8:
     try:
         userchoice = LibraryMenu()
         if userchoice == 1:
             AddBook()
+            cleared == False
         elif userchoice == 2:
             StatusChange(True, False)
         elif userchoice == 3:
             StatusChange(False, True)
         elif userchoice == 4:
-            ViewLibrary()
+            ViewLibrary(cleared)
         elif userchoice == 5:
             Search_For_Book()
         elif userchoice == 6:
             DeleteBook()
+        elif userchoice == 7:
+            ClearLibrary(cleared)
     except ValueError:
         print("Invalid input")
